@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — E-Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f42;
+    --accent: #00e5a0;
+    --accent2: #5b8fff;
+    --danger: #ff4d6d;
+    --text: #e8eaf2;
+    --muted: #6b7280;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background glow effects */
+  body::before {
+    content: '';
+    position: fixed;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(0,229,160,0.06) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(91,143,255,0.06) 0%, transparent 70%);
+    bottom: -150px; left: -150px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+    padding: 48px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.45s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .brand {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .card-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* Tab switcher */
+  .tabs {
+    display: flex;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 28px;
+    gap: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 7px;
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: none;
+    color: var(--muted);
+  }
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Forms */
+  .form { display: none; }
+  .form.active { display: block; animation: fadeUp 0.3s ease both; }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,160,0.08);
+  }
+  .field input::placeholder { color: var(--muted); }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--accent);
+    color: #0d0f14;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .btn-submit:hover { opacity: 0.88; }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Guest checkout button */
+  .btn-guest {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+  .btn-guest:hover { border-color: var(--text); color: var(--text); }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Alert messages */
+  .alert {
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .alert.error {
+    background: rgba(255,77,109,0.1);
+    border: 1px solid rgba(255,77,109,0.3);
+    color: var(--danger);
+  }
+  .alert.success {
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.3);
+    color: var(--accent);
+  }
+
+  /* Password strength */
+  .strength-bar {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .strength-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s, background 0.3s;
+    width: 0%;
+  }
+  .strength-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  /* Success screen */
+  #success-screen {
+    display: none;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: rgba(0,229,160,0.12);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+  }
+  .success-title {
+    font-family: var(--font-head);
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .success-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .user-info-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  .user-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .user-info-row:not(:last-child) { border-bottom: 1px solid var(--border); }
+  .user-info-row .key { color: var(--muted); font-size: 12px; }
+  .user-info-row .val { font-weight: 500; }
+  .badge-admin {
+    background: rgba(0,229,160,0.12);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+  .badge-user {
+    background: rgba(91,143,255,0.12);
+    color: var(--accent2);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+
+  .btn-continue {
+    width: 100%;
+    background: var(--accent);
+    color: #0d0f14;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-continue:hover { opacity: 0.88; }
+
+  .btn-signout {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .btn-signout:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* Footer links */
+  .footer-links {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .footer-links a {
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .footer-links a:hover { text-decoration: underline; }
+
+  /* Loading spinner inline */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(13,15,20,0.3);
+    border-top-color: #0d0f14;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Token display */
+  .token-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+    margin-top: 12px;
+    max-height: 60px;
+    overflow: hidden;
+    position: relative;
+  }
+  .token-box::after {
+    content: 'JWT TOKEN';
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="main-card">
+  <div class="brand">Group 12 · E-Commerce</div>
+  <div class="card-title" id="card-title">Welcome<br>Back</div>
+  <div class="card-sub" id="card-sub">Sign in to your account to continue shopping.</div>
+
+  <!-- Auth forms -->
+  <div id="auth-section">
+    <!-- Tab switcher -->
+    <div class="tabs">
+      <button class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- ── LOGIN FORM ── -->
+    <div class="form active" id="form-login">
+      <div class="alert error" id="login-error"></div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-submit" id="login-btn" onclick="doLogin()">Sign In →</button>
+      <div class="divider">or</div>
+      <button class="btn-guest" onclick="doGuest()">Continue as Guest</button>
+    </div>
+
+    <!-- ── REGISTER FORM ── -->
+    <div class="form" id="form-register">
+      <div class="alert error" id="register-error"></div>
+      <div class="alert success" id="register-success"></div>
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="reg-firstname" placeholder="Jane" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="reg-lastname" placeholder="Smith" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Phone (optional)</label>
+        <input type="tel" id="reg-phone" placeholder="(555) 000-0000" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Min. 6 characters" oninput="checkStrength(this.value)" autocomplete="new-password">
+        <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+        <div class="strength-label" id="strength-label"></div>
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="reg-confirm" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <button class="btn-submit" id="register-btn" onclick="doRegister()">Create Account →</button>
+    </div>
+  </div>
+
+  <!-- ── SUCCESS SCREEN ── -->
+  <div id="success-screen">
+    <div class="success-icon">✓</div>
+    <div class="success-title" id="success-title">Signed In!</div>
+    <div class="success-sub" id="success-sub">You are now logged in to your account.</div>
+    <div class="user-info-box" id="user-info-box"></div>
+    <div class="token-box" id="token-box"></div>
+    <button class="btn-continue" onclick="goToShop()">Continue to Shop →</button>
+    <button class="btn-signout" onclick="doSignOut()">Sign Out</button>
+  </div>
+
+  <div class="footer-links" id="footer-links">
+    <span id="footer-text">Don't have an account? <a onclick="switchTab('register')">Create one</a></span>
+  </div>
+</div>
+
+<script>
+const API = 'http://18.232.129.235:3000/api';
+let currentUser = null;
+
+// ── TAB SWITCHER ──
+function switchTab(tab) {
+  document.getElementById('form-login').classList.toggle('active', tab === 'login');
+  document.getElementById('form-register').classList.toggle('active', tab === 'register');
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+
+  clearAlerts();
+
+  if (tab === 'login') {
+    document.getElementById('card-title').innerHTML = 'Welcome<br>Back';
+    document.getElementById('card-sub').textContent = 'Sign in to your account to continue shopping.';
+    document.getElementById('footer-text').innerHTML = 'Don\'t have an account? <a onclick="switchTab(\'register\')">Create one</a>';
+  } else {
+    document.getElementById('card-title').innerHTML = 'Create<br>Account';
+    document.getElementById('card-sub').textContent = 'Join us to start shopping and track your orders.';
+    document.getElementById('footer-text').innerHTML = 'Already have an account? <a onclick="switchTab(\'login\')">Sign in</a>';
+  }
+}
+
+function clearAlerts() {
+  ['login-error','register-error','register-success'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.textContent = '';
+  });
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function showSuccess(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ── PASSWORD STRENGTH ──
+function checkStrength(val) {
+  const fill = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const levels = [
+    { pct: '0%', color: 'transparent', text: '' },
+    { pct: '25%', color: '#ff4d6d', text: 'Weak' },
+    { pct: '50%', color: '#ffb344', text: 'Fair' },
+    { pct: '75%', color: '#5b8fff', text: 'Good' },
+    { pct: '100%', color: '#00e5a0', text: 'Strong' },
+  ];
+  const l = levels[Math.min(score, 4)];
+  fill.style.width = l.pct;
+  fill.style.background = l.color;
+  label.textContent = l.text;
+  label.style.color = l.color;
+}
+
+// ── LOGIN ──
+async function doLogin() {
+  clearAlerts();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) { showError('login-error', 'Please enter your email and password.'); return; }
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Signing in...';
+
+  try {
+    const res = await fetch(API + '/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      showError('login-error', data.error || 'Invalid email or password.');
+      btn.disabled = false; btn.innerHTML = 'Sign In →';
+      return;
+    }
+
+    // Save token
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    currentUser = data.user;
+    showSuccessScreen(data.user, data.token, false);
+
+  } catch(e) {
+    showError('login-error', 'Cannot connect to server. Please try again.');
+    btn.disabled = false; btn.innerHTML = 'Sign In →';
+  }
+}
+
+// ── REGISTER ──
+async function doRegister() {
+  clearAlerts();
+  const first = document.getElementById('reg-firstname').value.trim();
+  const last = document.getElementById('reg-lastname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+
+  if (!first || !last || !email || !password) { showError('register-error', 'Please fill in all required fields.'); return; }
+  if (password.length < 6) { showError('register-error', 'Password must be at least 6 characters.'); return; }
+  if (password !== confirm) { showError('register-error', 'Passwords do not match.'); return; }
+
+  const btn = document.getElementById('register-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Creating account...';
+
+  try {
+    const res = await fetch(API + '/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, full_name: first + ' ' + last, phone: phone || undefined })
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      showError('register-error', data.error || 'Registration failed.');
+      btn.disabled = false; btn.innerHTML = 'Create Account →';
+      return;
+    }
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    currentUser = data.user;
+    showSuccessScreen(data.user, data.token, true);
+
+  } catch(e) {
+    showError('register-error', 'Cannot connect to server. Please try again.');
+    btn.disabled = false; btn.innerHTML = 'Create Account →';
+  }
+}
+
+// ── GUEST ──
+function doGuest() {
+  const guestUser = { full_name: 'Guest', email: 'guest', is_admin: false };
+  localStorage.setItem('user', JSON.stringify(guestUser));
+  showSuccessScreen(guestUser, null, false, true);
+}
+
+// ── SUCCESS SCREEN ──
+function showSuccessScreen(user, token, isNew, isGuest = false) {
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('footer-links').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+
+  document.getElementById('success-title').textContent = isGuest ? 'Welcome, Guest!' : isNew ? 'Account Created!' : 'Welcome Back!';
+  document.getElementById('success-sub').textContent = isGuest
+    ? 'You are browsing as a guest. Create an account to save your cart and orders.'
+    : isNew
+    ? 'Your account has been created. You are now signed in.'
+    : 'You have been successfully signed in to your account.';
+
+  const roleBadge = user.is_admin
+    ? '<span class="badge-admin">admin</span>'
+    : isGuest ? '<span class="badge-user">guest</span>'
+    : '<span class="badge-user">customer</span>';
+
+  document.getElementById('user-info-box').innerHTML = `
+    <div class="user-info-row">
+      <span class="key">Name</span>
+      <span class="val">${user.full_name}</span>
+    </div>
+    ${!isGuest ? `<div class="user-info-row">
+      <span class="key">Email</span>
+      <span class="val">${user.email}</span>
+    </div>` : ''}
+    <div class="user-info-row">
+      <span class="key">Role</span>
+      <span class="val">${roleBadge}</span>
+    </div>
+    ${user.is_admin ? `<div class="user-info-row">
+      <span class="key">Access</span>
+      <span class="val" style="color:var(--accent);font-size:13px;">Admin Dashboard available</span>
+    </div>` : ''}
+  `;
+
+  if (token) {
+    document.getElementById('token-box').textContent = token;
+    document.getElementById('token-box').style.display = 'block';
+  } else {
+    document.getElementById('token-box').style.display = 'none';
+  }
+
+  document.getElementById('card-title').textContent = isGuest ? 'Guest Mode' : isNew ? 'You\'re In!' : 'Signed In!';
+  document.getElementById('card-sub').textContent = '';
+}
+
+function goToShop() {
+  // Redirect to your products/shop page
+  // Change this URL to wherever your products page is
+  alert('Redirect to shop page here!\n\nTell Keerthi to link this to the products page.');
+}
+
+function doSignOut() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  currentUser = null;
+  document.getElementById('auth-section').style.display = 'block';
+  document.getElementById('footer-links').style.display = 'block';
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('card-title').innerHTML = 'Welcome<br>Back';
+  document.getElementById('card-sub').textContent = 'Sign in to your account to continue shopping.';
+  switchTab('login');
+}
+
+// Allow Enter key
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('reg-confirm').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doRegister();
+});
+
+// Check if already logged in
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('user');
+  const token = localStorage.getItem('token');
+  if (saved && token) {
+    try {
+      const user = JSON.parse(saved);
+      currentUser = user;
+      showSuccessScreen(user, token, false);
+    } catch(e) {}
+  }
+});
+</script>
+</body>
+</html>
