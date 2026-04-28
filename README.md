@@ -50,6 +50,6 @@
 
 ## Team — Group 12
 
-- **Vineesha Nadendla** — AWS Infrastructure, Admin UI, Auth, Shop, Deployment
-- **Keerthi Sudha** — Products page, Filters, Contact Us, Presentations
+- **Vineesha Nadendla** — AWS Infrastructure, Admin UI, Auth, Shop, Deployment, Products page, Filters, Contact Us 
+- **Keerthi Sudha** — Presentations
 - **Lucas Langstraat** — Backend API, SQLite database, Cart and Checkout
