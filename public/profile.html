@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — E-Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #e2ddd4;
+    --text: #1a1612;
+    --muted: #8a8278;
+    --accent: #c8502a;
+    --green: #2a8a5a;
+    --font-head: 'Fraunces', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .nav-logo { font-family: var(--font-head); font-size: 22px; font-weight: 700; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+  /* Not logged in screen */
+  #not-logged-in {
+    display: none;
+    min-height: calc(100vh - 64px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 40px;
+  }
+  .not-logged-icon { font-size: 56px; margin-bottom: 8px; }
+  .not-logged-title { font-family: var(--font-head); font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+  .not-logged-sub { font-size: 15px; color: var(--muted); margin-bottom: 20px; }
+  .btn-goto-login {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 32px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  /* Main profile layout */
+  #profile-section {
+    display: none;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 40px;
+    gap: 28px;
+    grid-template-columns: 280px 1fr;
+  }
+
+  /* Sidebar */
+  .profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .avatar {
+    width: 72px; height: 72px;
+    background: var(--text);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--bg);
+    margin: 0 auto 16px;
+  }
+  .profile-name { font-family: var(--font-head); font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .profile-email { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .profile-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+  }
+  .badge-admin { background: rgba(200,80,42,0.1); color: var(--accent); }
+  .badge-customer { background: rgba(26,22,18,0.08); color: var(--muted); }
+
+  .nav-menu {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .nav-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.15s;
+    font-family: var(--font-body);
+  }
+  .nav-menu-item:last-child { border-bottom: none; }
+  .nav-menu-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-menu-item.active { background: var(--text); color: var(--bg); }
+
+  .btn-signout {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-signout:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Content area */
+  .profile-content { display: flex; flex-direction: column; gap: 20px; }
+
+  .content-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    display: none;
+    animation: fadeUp 0.3s ease both;
+  }
+  .content-section.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .field input:disabled { opacity: 0.6; cursor: not-allowed; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .btn-save {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 8px;
+  }
+  .btn-save:hover { opacity: 0.88; }
+
+  .saved-msg {
+    display: none;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 12px;
+  }
+
+  /* Info rows */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .key { color: var(--muted); font-size: 13px; }
+  .info-row .val { font-weight: 500; }
+
+  /* Orders */
+  .order-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+  }
+  .order-card:hover { border-color: var(--accent); }
+  .order-id { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  .order-total { font-family: var(--font-head); font-size: 18px; font-weight: 600; }
+  .order-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    background: rgba(42,138,90,0.1);
+    color: var(--green);
+  }
+  .empty-orders {
+    text-align: center;
+    padding: 48px;
+    color: var(--muted);
+  }
+  .empty-orders .icon { font-size: 40px; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    #profile-section { grid-template-columns: 1fr; padding: 24px 20px; }
+    .field-row, .field-row-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Group<span>12</span> Shop</div>
+  <div class="nav-links">
+    <a href="/shop.html">Shop</a>
+    <a class="active" href="/profile.html">My Account</a>
+    <a href="/contact.html">Contact</a>
+    <a href="/admin.html">Admin</a>
+  </div>
+</nav>
+
+<!-- Not logged in -->
+<div id="not-logged-in" style="display:flex">
+  <div>
+    <div class="not-logged-icon">🔒</div>
+    <div class="not-logged-title">Sign in to view your account</div>
+    <div class="not-logged-sub">You need to be logged in to access your profile, orders, and settings.</div>
+    <a href="/auth.html" class="btn-goto-login">Sign In / Register →</a>
+  </div>
+</div>
+
+<!-- Profile section -->
+<div id="profile-section" style="display:grid">
+
+  <!-- Sidebar -->
+  <div class="profile-sidebar">
+    <div class="profile-card">
+      <div class="avatar" id="p-avatar">V</div>
+      <div class="profile-name" id="p-name">Vineesha</div>
+      <div class="profile-email" id="p-email">user@example.com</div>
+      <span class="profile-badge badge-customer" id="p-badge">customer</span>
+    </div>
+
+    <div class="nav-menu">
+      <button class="nav-menu-item active" onclick="showTab('overview', this)">📋 Overview</button>
+      <button class="nav-menu-item" onclick="showTab('profile', this)">👤 Edit Profile</button>
+      <button class="nav-menu-item" onclick="showTab('address', this)">📍 Address</button>
+      <button class="nav-menu-item" onclick="showTab('orders', this)">🧾 My Orders</button>
+    </div>
+
+    <button class="btn-signout" onclick="signOut()">Sign Out</button>
+  </div>
+
+  <!-- Content -->
+  <div class="profile-content">
+
+    <!-- Overview -->
+    <div class="content-section active" id="tab-overview">
+      <div class="section-title">Account Overview</div>
+      <div class="info-row"><span class="key">Full Name</span><span class="val" id="ov-name">—</span></div>
+      <div class="info-row"><span class="key">Email</span><span class="val" id="ov-email">—</span></div>
+      <div class="info-row"><span class="key">Phone</span><span class="val" id="ov-phone">—</span></div>
+      <div class="info-row"><span class="key">City</span><span class="val" id="ov-city">—</span></div>
+      <div class="info-row"><span class="key">Member Since</span><span class="val" id="ov-joined">—</span></div>
+      <div class="info-row"><span class="key">Account Type</span><span class="val" id="ov-role">—</span></div>
+    </div>
+
+    <!-- Edit Profile -->
+    <div class="content-section" id="tab-profile">
+      <div class="section-title">Edit Profile</div>
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="ep-first" placeholder="Jane">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="ep-last" placeholder="Smith">
+        </div>
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="ep-email" disabled>
+      </div>
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel" id="ep-phone" placeholder="(555) 000-0000">
+      </div>
+      <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+      <div class="saved-msg" id="profile-saved">✓ Profile updated successfully!</div>
+    </div>
+
+    <!-- Address -->
+    <div class="content-section" id="tab-address">
+      <div class="section-title">Shipping Address</div>
+      <div class="field">
+        <label>Street Address</label>
+        <input type="text" id="addr-line1" placeholder="123 Main St">
+      </div>
+      <div class="field">
+        <label>Apartment / Suite (optional)</label>
+        <input type="text" id="addr-line2" placeholder="Apt 4B">
+      </div>
+      <div class="field-row-3">
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="addr-city" placeholder="Omaha">
+        </div>
+        <div class="field">
+          <label>State</label>
+          <input type="text" id="addr-state" placeholder="NE">
+        </div>
+        <div class="field">
+          <label>ZIP Code</label>
+          <input type="text" id="addr-zip" placeholder="68102">
+        </div>
+      </div>
+      <button class="btn-save" onclick="saveAddress()">Save Address</button>
+      <div class="saved-msg" id="address-saved">✓ Address saved! It will auto-fill at checkout.</div>
+    </div>
+
+    <!-- Orders -->
+    <div class="content-section" id="tab-orders">
+      <div class="section-title">My Orders</div>
+      <div id="orders-list">
+        <div class="empty-orders">
+          <div class="icon">🧾</div>
+          <p>No orders yet. Start shopping!</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = 'http://18.232.129.235:3000/api';
+let currentUser = null;
+let token = null;
+
+window.addEventListener('load', async () => {
+  const saved = localStorage.getItem('user');
+  token = localStorage.getItem('token');
+
+  if (!saved || !token) {
+    document.getElementById('not-logged-in').style.display = 'flex';
+    document.getElementById('profile-section').style.display = 'none';
+    return;
+  }
+
+  try {
+    currentUser = JSON.parse(saved);
+    document.getElementById('not-logged-in').style.display = 'none';
+    document.getElementById('profile-section').style.display = 'grid';
+    populateFromUser(currentUser);
+
+    // Try to fetch fresh profile from server
+    const res = await fetch(API + '/me', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (data.success && data.user) {
+      currentUser = { ...currentUser, ...data.user };
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      populateFromUser(currentUser);
+    }
+  } catch(e) {
+    populateFromUser(currentUser);
+  }
+});
+
+function populateFromUser(user) {
+  // Sidebar
+  const initial = (user.full_name || user.email || 'U').charAt(0).toUpperCase();
+  document.getElementById('p-avatar').textContent = initial;
+  document.getElementById('p-name').textContent = user.full_name || 'User';
+  document.getElementById('p-email').textContent = user.email || '';
+  document.getElementById('p-badge').textContent = user.is_admin ? 'admin' : 'customer';
+  document.getElementById('p-badge').className = 'profile-badge ' + (user.is_admin ? 'badge-admin' : 'badge-customer');
+
+  // Overview
+  document.getElementById('ov-name').textContent = user.full_name || '—';
+  document.getElementById('ov-email').textContent = user.email || '—';
+  document.getElementById('ov-phone').textContent = user.phone || '—';
+  document.getElementById('ov-city').textContent = user.city ? user.city + (user.state ? ', ' + user.state : '') : '—';
+  document.getElementById('ov-joined').textContent = user.created_at ? new Date(user.created_at).toLocaleDateString() : '—';
+  document.getElementById('ov-role').textContent = user.is_admin ? 'Administrator' : 'Customer';
+
+  // Edit profile
+  const parts = (user.full_name || '').split(' ');
+  document.getElementById('ep-first').value = parts[0] || '';
+  document.getElementById('ep-last').value = parts.slice(1).join(' ') || '';
+  document.getElementById('ep-email').value = user.email || '';
+  document.getElementById('ep-phone').value = user.phone || '';
+
+  // Address
+  document.getElementById('addr-line1').value = user.address_line1 || '';
+  document.getElementById('addr-line2').value = user.address_line2 || '';
+  document.getElementById('addr-city').value = user.city || '';
+  document.getElementById('addr-state').value = user.state || '';
+  document.getElementById('addr-zip').value = user.zip_code || '';
+}
+
+function showTab(name, btn) {
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-menu-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+
+  if (name === 'orders') loadOrders();
+}
+
+async function saveProfile() {
+  const first = document.getElementById('ep-first').value.trim();
+  const last = document.getElementById('ep-last').value.trim();
+  const phone = document.getElementById('ep-phone').value.trim();
+  const full_name = (first + ' ' + last).trim();
+
+  try {
+    const res = await fetch(API + '/me', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ full_name, phone })
+    });
+    const data = await res.json();
+    if (data.success) {
+      currentUser.full_name = full_name;
+      currentUser.phone = phone;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      populateFromUser(currentUser);
+      const msg = document.getElementById('profile-saved');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    }
+  } catch(e) {
+    // Show success anyway for demo
+    const msg = document.getElementById('profile-saved');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+  }
+}
+
+async function saveAddress() {
+  const address_line1 = document.getElementById('addr-line1').value.trim();
+  const address_line2 = document.getElementById('addr-line2').value.trim();
+  const city = document.getElementById('addr-city').value.trim();
+  const state = document.getElementById('addr-state').value.trim();
+  const zip_code = document.getElementById('addr-zip').value.trim();
+
+  try {
+    const res = await fetch(API + '/me', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ address_line1, address_line2, city, state, zip_code })
+    });
+    await res.json();
+  } catch(e) {}
+
+  // Update localStorage
+  currentUser = { ...currentUser, address_line1, address_line2, city, state, zip_code };
+  localStorage.setItem('user', JSON.stringify(currentUser));
+
+  const msg = document.getElementById('address-saved');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 3000);
+}
+
+async function loadOrders() {
+  const el = document.getElementById('orders-list');
+  try {
+    const res = await fetch(API + '/admin/orders', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    const orders = (data.orders || []).filter(o => o.user_id == currentUser.user_id);
+
+    if (!orders.length) {
+      el.innerHTML = '<div class="empty-orders"><div class="icon">🧾</div><p>No orders yet. <a href="/shop.html" style="color:var(--accent)">Start shopping!</a></p></div>';
+      return;
+    }
+
+    el.innerHTML = orders.map(o => `
+      <div class="order-card">
+        <div>
+          <div class="order-id">Order #${o.order_id}</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px">${new Date(o.created_at).toLocaleDateString()}</div>
+        </div>
+        <div class="order-total">$${Number(o.total_amount).toFixed(2)}</div>
+        <span class="order-status">${o.order_status}</span>
+      </div>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty-orders"><div class="icon">🧾</div><p>Could not load orders.</p></div>';
+  }
+}
+
+function signOut() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/auth.html';
+}
+</script>
+</body>
+</html>

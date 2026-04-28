@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — E-Commerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #e2ddd4;
+    --text: #1a1612;
+    --muted: #8a8278;
+    --accent: #c8502a;
+    --green: #2a8a5a;
+    --font-head: 'Fraunces', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .nav-logo { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--text); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+  .hero {
+    background: var(--text);
+    color: var(--bg);
+    padding: 56px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,80,42,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .hero-title { font-family: var(--font-head); font-size: 48px; font-weight: 300; line-height: 1.1; margin-bottom: 12px; }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 16px; color: rgba(247,245,240,0.6); max-width: 400px; }
+
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  /* Left: info */
+  .contact-info h2 {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .contact-info p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+  .info-card:hover { border-color: var(--accent); }
+  .info-icon {
+    font-size: 24px;
+    width: 44px; height: 44px;
+    background: var(--surface2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .info-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; font-family: var(--font-mono); }
+  .info-val { font-size: 15px; font-weight: 500; color: var(--text); }
+
+  /* Right: form */
+  .contact-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+  }
+  .form-title {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 120px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { opacity: 0.88; }
+  .btn-submit:active { transform: scale(0.98); }
+
+  /* Success */
+  .success-box {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-title { font-family: var(--font-head); font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .btn-back {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-back:hover { opacity: 0.8; }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; gap: 32px; padding: 32px 20px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Group<span>12</span> Shop</div>
+  <div class="nav-links">
+    <a href="/shop.html">Shop</a>
+    <a href="/auth.html">My Account</a>
+    <a href="/admin.html">Admin</a>
+    <a class="active" href="/contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Group 12 · Support</div>
+  <div class="hero-title">Get in <em>touch</em><br>with us</div>
+  <div class="hero-sub">Have a question about your order or our products? We're here to help.</div>
+</div>
+
+<div class="main">
+  <!-- Left info -->
+  <div class="contact-info">
+    <h2>We'd love to hear from you</h2>
+    <p>Whether you have a question about an order, need help with your account, or just want to say hello — our team is ready to assist you.</p>
+
+    <div class="info-card">
+      <div class="info-icon">📧</div>
+      <div>
+        <div class="info-label">Email</div>
+        <div class="info-val">support@group12shop.com</div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">📍</div>
+      <div>
+        <div class="info-label">Location</div>
+        <div class="info-val">Omaha, Nebraska, USA</div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">🕐</div>
+      <div>
+        <div class="info-label">Response Time</div>
+        <div class="info-val">Within 24 hours</div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-icon">☁️</div>
+      <div>
+        <div class="info-label">Powered By</div>
+        <div class="info-val">AWS EC2 · Node.js · SQLite</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right form -->
+  <div class="contact-form">
+    <div id="form-section">
+      <div class="form-title">Send us a message</div>
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="c-first" placeholder="Jane">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="c-last" placeholder="Smith">
+        </div>
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="c-email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Subject</label>
+        <select id="c-subject">
+          <option value="">Select a topic</option>
+          <option>Order Question</option>
+          <option>Product Inquiry</option>
+          <option>Account Help</option>
+          <option>Returns & Refunds</option>
+          <option>Technical Issue</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Message</label>
+        <textarea id="c-message" placeholder="Tell us how we can help..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="submitForm()">Send Message →</button>
+    </div>
+
+    <div class="success-box" id="success-box">
+      <div class="success-icon">✉️</div>
+      <div class="success-title">Message Sent!</div>
+      <div class="success-sub">Thank you for reaching out. We'll get back to you within 24 hours.</div>
+      <button class="btn-back" onclick="resetForm()">Send Another Message</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pre-fill from localStorage if logged in
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('user');
+  if (saved) {
+    try {
+      const user = JSON.parse(saved);
+      if (user.full_name) {
+        const parts = user.full_name.split(' ');
+        document.getElementById('c-first').value = parts[0] || '';
+        document.getElementById('c-last').value = parts.slice(1).join(' ') || '';
+      }
+      if (user.email) document.getElementById('c-email').value = user.email;
+    } catch(e) {}
+  }
+});
+
+function submitForm() {
+  const first = document.getElementById('c-first').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const subject = document.getElementById('c-subject').value;
+  const message = document.getElementById('c-message').value.trim();
+
+  if (!first || !email || !subject || !message) {
+    alert('Please fill in all fields before sending.');
+    return;
+  }
+
+  // Show success (in real app this would send to backend)
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('success-box').style.display = 'block';
+}
+
+function resetForm() {
+  document.getElementById('form-section').style.display = 'block';
+  document.getElementById('success-box').style.display = 'none';
+  document.getElementById('c-subject').value = '';
+  document.getElementById('c-message').value = '';
+}
+</script>
+</body>
+</html>
